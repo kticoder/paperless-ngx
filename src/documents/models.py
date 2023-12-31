@@ -333,11 +333,7 @@ class Document(ModelWithOwner):
         if suffix:
             result += suffix
 
-        if archive:
-            result += ".pdf"
-        else:
-            result += self.file_type
-
+        result += ".pdf" if archive else self.file_type
         return pathvalidate.sanitize_filename(result, replacement_text="-")
 
     @property
@@ -555,8 +551,7 @@ class FileInfo:
 
         # Parse filename components.
         for regex in cls.REGEXES.values():
-            m = regex.match(filename)
-            if m:
+            if m := regex.match(filename):
                 properties = m.groupdict()
                 cls._mangle_property(properties, "created")
                 cls._mangle_property(properties, "title")
@@ -851,7 +846,7 @@ class CustomFieldInstance(models.Model):
         ]
 
     def __str__(self) -> str:
-        return str(self.field.name) + f" : {self.value}"
+        return f"{str(self.field.name)} : {self.value}"
 
     @property
     def value(self):

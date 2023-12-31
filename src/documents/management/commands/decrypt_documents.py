@@ -43,14 +43,13 @@ class Command(BaseCommand):
         except KeyboardInterrupt:
             return
 
-        passphrase = options["passphrase"] or settings.PASSPHRASE
-        if not passphrase:
+        if passphrase := options["passphrase"] or settings.PASSPHRASE:
+            self.__gpg_to_unencrypted(passphrase)
+        else:
             raise CommandError(
                 "Passphrase not defined.  Please set it with --passphrase or "
                 "by declaring it in your environment or your config.",
             )
-
-        self.__gpg_to_unencrypted(passphrase)
 
     def __gpg_to_unencrypted(self, passphrase: str):
         encrypted_files = Document.objects.filter(
@@ -71,7 +70,7 @@ class Command(BaseCommand):
 
             ext = os.path.splitext(document.filename)[1]
 
-            if not ext == ".gpg":
+            if ext != ".gpg":
                 raise CommandError(
                     f"Abort: encrypted file {document.source_path} does not "
                     f"end with .gpg",

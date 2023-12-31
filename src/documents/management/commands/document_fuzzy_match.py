@@ -104,9 +104,10 @@ class Command(MultiProcessMixin, ProgressBarMixin, BaseCommand):
 
         # Don't spin up a pool of 1 process
         if self.process_count == 1:
-            results = []
-            for work in tqdm.tqdm(work_pkgs, disable=self.no_progress_bar):
-                results.append(_process_and_match(work))
+            results = [
+                _process_and_match(work)
+                for work in tqdm.tqdm(work_pkgs, disable=self.no_progress_bar)
+            ]
         else:  # pragma: no cover
             with multiprocessing.Pool(processes=self.process_count) as pool:
                 results = list(
@@ -130,7 +131,7 @@ class Command(MultiProcessMixin, ProgressBarMixin, BaseCommand):
                 )
                 maybe_delete_ids.append(result.doc_two_pk)
 
-        if len(messages) == 0:
+        if not messages:
             messages.append(
                 self.style.SUCCESS("No matches found"),
             )

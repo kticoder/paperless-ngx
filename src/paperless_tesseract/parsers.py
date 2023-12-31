@@ -300,10 +300,10 @@ class RasterisedDocumentParser(DocumentParser):
     def parse(self, document_path: Path, mime_type, file_name=None):
         # This forces tesseract to use one core per page.
         os.environ["OMP_THREAD_LIMIT"] = "1"
-        VALID_TEXT_LENGTH = 50
-
         if mime_type == "application/pdf":
             text_original = self.extract_text(None, document_path)
+            VALID_TEXT_LENGTH = 50
+
             original_has_text = (
                 text_original is not None and len(text_original) > VALID_TEXT_LENGTH
             )
@@ -416,8 +416,6 @@ class RasterisedDocumentParser(DocumentParser):
             # Anything else is probably serious.
             raise ParseError(f"{e.__class__.__name__}: {e!s}") from e
 
-        # As a last resort, if we still don't have any text for any reason,
-        # try to extract the text from the original document.
         if not self.text:
             if original_has_text:
                 self.text = text_original
