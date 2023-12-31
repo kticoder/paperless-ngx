@@ -283,8 +283,8 @@ class Consumer(LoggingMixin):
             kwargs={"pk": document.pk},
         )
         script_env["DOCUMENT_CORRESPONDENT"] = str(document.correspondent)
-        script_env["DOCUMENT_TAGS"] = str(
-            ",".join(document.tags.all().values_list("name", flat=True)),
+        script_env["DOCUMENT_TAGS"] = ",".join(
+            document.tags.all().values_list("name", flat=True)
         )
         script_env["DOCUMENT_ORIGINAL_FILENAME"] = str(document.original_filename)
         script_env["TASK_ID"] = self.task_id or ""
@@ -300,7 +300,7 @@ class Consumer(LoggingMixin):
                     reverse("document-download", kwargs={"pk": document.pk}),
                     reverse("document-thumb", kwargs={"pk": document.pk}),
                     str(document.correspondent),
-                    str(",".join(document.tags.all().values_list("name", flat=True))),
+                    ",".join(document.tags.all().values_list("name", flat=True)),
                 ],
                 env=script_env,
                 capture_output=True,
@@ -566,7 +566,7 @@ class Consumer(LoggingMixin):
                 # https://github.com/jonaswinkler/paperless-ng/discussions/1037
                 shadow_file = os.path.join(
                     os.path.dirname(self.original_path),
-                    "._" + os.path.basename(self.original_path),
+                    f"._{os.path.basename(self.original_path)}",
                 )
 
                 if os.path.isfile(shadow_file):
@@ -779,7 +779,6 @@ class Consumer(LoggingMixin):
         if (
             self.override_view_users is not None
             or self.override_view_groups is not None
-            or self.override_change_users is not None
             or self.override_change_users is not None
         ):
             permissions = {

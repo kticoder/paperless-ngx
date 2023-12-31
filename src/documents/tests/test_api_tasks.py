@@ -75,7 +75,7 @@ class TestTasks(DirectoriesMixin, APITestCase):
             task_file_name="task_two.pdf",
         )
 
-        response = self.client.get(self.ENDPOINT + f"?task_id={id1}")
+        response = self.client.get(f"{self.ENDPOINT}?task_id={id1}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -102,7 +102,7 @@ class TestTasks(DirectoriesMixin, APITestCase):
             task_file_name="task_two.pdf",
         )
 
-        response = self.client.get(self.ENDPOINT + "?task_id=bad-task-id")
+        response = self.client.get(f"{self.ENDPOINT}?task_id=bad-task-id")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
